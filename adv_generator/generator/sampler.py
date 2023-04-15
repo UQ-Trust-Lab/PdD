@@ -49,11 +49,41 @@ class DeletionSampler(Sampler):
     # TODO: need to design how reordering attack is implemented. The diveristy of 3Ds in this case is not used.
     def __init__(self, density, distribution, diversity):
         super().__init__(density=density, distribution=distribution, diversity=diversity)
-
-
+    
 class TypoSampler(Sampler):
     # TODO: define and implement a default dictionary of typos for all latin characters and set it as the default value
-    def __init__(self, typo = {}):
+
+    TYPO_DICT = {
+        'a': ['q', 's', 'w', 'z'],
+        'b': ['v', 'n'],
+        'c': ['x', 'v', 'd', 'f'],
+        'd': ['s', 'e', 'f', 'c', 'x'],
+        'e': ['w', 'r', 's', 'd'],
+        'f': ['d', 'r', 'g', 'v', 'c'],
+        'g': ['f', 't', 'h', 'b', 'v'],
+        'h': ['g', 'y', 'j', 'n', 'b'],
+        'i': ['u', 'o', 'k', 'j'],
+        'j': ['k', 'i', 'm', 'u', 'h', 'n'],
+        'k': ['j', 'l', 'i', 'o', 'm'],
+        'l': ['k', 'o', 'p'],
+        'm': ['n', 'j', 'k'],
+        'n': ['b', 'm', 'h'],
+        'o': ['i', 'p', 'l', 'k'],
+        'p': ['o', 'l'],
+        'q': ['a', 'w'],
+        'r': ['e', 't', 'f'],
+        's': ['a', 'd', 'w', 'x'],
+        't': ['r', 'y', 'g'],
+        'u': ['y', 'i', 'j', 'k'],
+        'v': ['c', 'b', 'f', 'g'],
+        'w': ['q', 'e', 's', 'a'],
+        'x': ['z', 'c', 's', 'd'],
+        'y': ['u', 't', 'h'],
+        'z': ['x', 'a', 's']
+    }
+
+    def __init__(self, typo=None):
         super().__init__()
-        self.typo = typo   
-    
+        if typo is None:
+            typo = TypoSampler.TYPO_DICT
+        self.typo = typo
