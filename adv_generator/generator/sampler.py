@@ -44,46 +44,85 @@ class ReorderingSampler(Sampler):
     # TODO: need to design how reordering attack is implemented. The diveristy of 3Ds in this case is not used.
     def __init__(self):
         super().__init__()   
+
     
 class DeletionSampler(Sampler):
     # TODO: need to design how reordering attack is implemented. The diveristy of 3Ds in this case is not used.
     def __init__(self, density, distribution, diversity):
         super().__init__(density=density, distribution=distribution, diversity=diversity)
+
     
 class TypoSampler(Sampler):
-    # TODO: define and implement a default dictionary of typos for all latin characters and set it as the default value
-
-    TYPO_DICT = {
-        'a': ['q', 's', 'w', 'z'],
+    # Aim to define and implement a default dictionary of typos for all latin characters and set it as the default value
+    DEFAULT_TYPO_DICT = {
+        'a': ['q', 's', 'z'],
         'b': ['v', 'n'],
+        'c': ['x', 'v'],
+        'd': ['s', 'f', 'e'],
+        'e': ['r', 'w', 'd'],
+        'f': ['d', 'g', 'r'],
+        'g': ['f', 'h', 't'],
+        'h': ['g', 'j', 'y'],
+        'i': ['u', 'o', 'k'],
+        'j': ['h', 'k', 'u'],
+        'k': ['j', 'l', 'i'],
+        'l': ['k', 'o', 'p'],
+        'm': ['n'],
+        'n': ['m', 'b'],
+        'o': ['i', 'p', 'l'],
+        'p': ['o', 'l'],
+        'q': ['a', 'w'],
+        'r': ['e', 't', 'f'],
+        's': ['a', 'd'],
+        't': ['r', 'y', 'g'],
+        'u': ['y', 'i', 'j'],
+        'v': ['c', 'b'],
+        'w': ['q', 'e'],
+        'x': ['z', 'c'],
+        'y': ['t', 'u', 'h'],
+        'z': ['x'],
+        ' ': ['']
+    }
+
+
+    ADV_TYPO_DICT = {
+        'a': ['q', 's', 'w', 'z'],
+        'b': ['v', 'n', 'g', 'h'],
         'c': ['x', 'v', 'd', 'f'],
-        'd': ['s', 'e', 'f', 'c', 'x'],
+        'd': ['s', 'e', 'f', 'c', 'x', 'r'],
         'e': ['w', 'r', 's', 'd'],
-        'f': ['d', 'r', 'g', 'v', 'c'],
-        'g': ['f', 't', 'h', 'b', 'v'],
-        'h': ['g', 'y', 'j', 'n', 'b'],
+        'f': ['d', 'r', 'g', 'v', 'c', 't'],
+        'g': ['f', 't', 'h', 'b', 'v', 'y'],
+        'h': ['g', 'y', 'j', 'n', 'b', 'u'],
         'i': ['u', 'o', 'k', 'j'],
         'j': ['k', 'i', 'm', 'u', 'h', 'n'],
         'k': ['j', 'l', 'i', 'o', 'm'],
         'l': ['k', 'o', 'p'],
         'm': ['n', 'j', 'k'],
-        'n': ['b', 'm', 'h'],
+        'n': ['b', 'm', 'h', 'j'],
         'o': ['i', 'p', 'l', 'k'],
         'p': ['o', 'l'],
         'q': ['a', 'w'],
-        'r': ['e', 't', 'f'],
-        's': ['a', 'd', 'w', 'x'],
-        't': ['r', 'y', 'g'],
-        'u': ['y', 'i', 'j', 'k'],
+        'r': ['e', 't', 'f', 'd'],
+        's': ['a', 'd', 'w', 'x', 'e', 'z'],
+        't': ['r', 'y', 'g', 'f'],
+        'u': ['y', 'i', 'j', 'h'],
         'v': ['c', 'b', 'f', 'g'],
         'w': ['q', 'e', 's', 'a'],
         'x': ['z', 'c', 's', 'd'],
-        'y': ['u', 't', 'h'],
-        'z': ['x', 'a', 's']
+        'y': ['u', 't', 'h', 'g'],
+        'z': ['x', 'a', 's'],
+        ' ': ['']
     }
 
-    def __init__(self, typo=None):
-        super().__init__()
+
+    def __init__(self, density, distribution, diversity, typo=None):
+        super().__init__(density=density, distribution=distribution, diversity=diversity)
         if typo is None:
-            typo = TypoSampler.TYPO_DICT
+            if diversity >= 0.5:
+                # ADV_TYPO_DICT contains more advanced typo mappings.
+                typo = TypoSampler.ADV_TYPO_DICT
+            else:
+                # DEFAULT_TYPO_DICT contains basic typo mappings, 
+                typo = TypoSampler.DEFAULT_TYPO_DICT
         self.typo = typo

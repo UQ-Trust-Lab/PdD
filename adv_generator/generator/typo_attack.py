@@ -12,9 +12,9 @@ def TypoAttack(input, sampler=TypoSampler()):
         sampler (TypoSampler): The sampler object to determine the density and distribution of typos. 
             Defaults to TypoSampler().
 
-    TODO: The attribute `diversity` is not involved at this stage. 
-          Maybe It can be used to indicate the range of TYPO. i.e. how many keys around the selected key.
-          For smaller diversity, 'a' -> ['q', 's']; for bigger diversity 'a' -> ['q', 's', 'w', 'z'].
+    Note:
+        Here I use `diversity` to indicate the range of TYPO. i.e. how many keys around the selected key.
+        For smaller diversity, 'a' -> ['q', 's']; for bigger diversity 'a' -> ['q', 's', 'w', 'z'].
 
     """
 
@@ -22,11 +22,12 @@ def TypoAttack(input, sampler=TypoSampler()):
     assert strlen > 0, "The input must be a string with its length greater than 0"
 
     sizeOfTypo = math.ceil(sampler.density * strlen)
-    assert strlen > sizeOfTypo, "The size of deletion is greater than the original input"
+    assert strlen > sizeOfTypo, "The size of modification is greater than the original input"
 
+    # Create a list of indices in different ways for different distributions
     indicesToModify = []
 
-    if sampler.distribution.sigma == -1:
+    if sampler.distribution.sigma == -1:  # uniform distribution
         indicesToModify = np.random.randint(strlen, size=sizeOfTypo)
     else:
         mu, sigma = sampler.distribution.mu, sampler.distribution.sigma
@@ -37,12 +38,12 @@ def TypoAttack(input, sampler=TypoSampler()):
                 indicesToModify.append(index)
 
 
-    inputList = list(input)
+    inputList = list(input)  # "Oh hi" -> ['O','h',' ','h','i']
     for index in indicesToModify:
         original_char = inputList[index]
-        lowercase_char = original_char.lower() 
+        lowercase_char = original_char.lower()
         typo_char = np.random.choice(sampler.typo[lowercase_char])
-        if original_char.isupper():
+        if original_char.isupper():  # Handle upper cases
             typo_char = typo_char.upper()
         inputList[index] = typo_char
 
