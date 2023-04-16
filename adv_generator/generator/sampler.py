@@ -4,7 +4,7 @@ It can be initialized with three parameters, i.e., density, distribution, and di
 These three parameters altogether constitute the 3Ds principle of all sorts of our attack.
 '''
 
-class Sampler:
+class Sampler(object):
     def __init__(self, density = 0.5, distribution = (0, -1), diversity = 0.5):
         self.density = density
         self.distribution = distribution
@@ -12,7 +12,7 @@ class Sampler:
         assert self.density >= 0 and self.density <= 1, "Density must be a float number between 0 and 1."
         assert self.diversity >= 0 and self.diversity <= 1, "Diversity must be a float number between 0 and 1."
 
-    def description(self):
+    def __str__(self):
         description = []
         description.append("Density " + str(self.density))
         
@@ -23,7 +23,7 @@ class Sampler:
             description.append("Normal Dist. (" + str(mu) + ", " + str(sigma) +")")
         description.append("Diversity " + str(self.diversity))
         
-        return description
+        return str(description)
 
 
 class InvisibleCharSampler(Sampler):
@@ -47,7 +47,7 @@ class ReorderingSampler(Sampler):
     
 class DeletionSampler(Sampler):
     # TODO: need to design how reordering attack is implemented. The diveristy of 3Ds in this case is not used.
-    def __init__(self, density, distribution, diversity):
+    def __init__(self, density = 0.5, distribution = (0, -1), diversity = 0.5):
         super().__init__(density=density, distribution=distribution, diversity=diversity)
 
 

@@ -3,7 +3,7 @@ from generator.distribution import *
 import numpy as np
 import math
 
-def DeletionAttack(input, sampler=DeletionSampler()):
+def DeletionAttack(input, sampler=DeletionSampler(density = 0.5, distribution = (0, -1), diversity = 0.5)):
 
     strlen = len(input)
     assert strlen > 0, "The input must be a string with its length greater than 0"
@@ -14,16 +14,17 @@ def DeletionAttack(input, sampler=DeletionSampler()):
     # We create a list of indices in different ways for different distributions
     indicesToDelete = []
     
-    if sampler.distribution.sigma == -1: # uniform distribution
-        indicesToDelete = np.random.randint(strlen, size=sizeOfDeletion)
+    (mu, sigma) = sampler.distribution
+    if sigma == -1: # uniform distribution
+        indicesToDelete = np.random.randint(strlen, size=sizeOfDeletion).tolist()
     else:
         count = 0
         while count < sizeOfDeletion:
-            index = int(np.random.normal(sampler.distribution.mu, sampler.distribution.sigma))
-            if not index in indices:
+            index = int(np.random.normal(mu, sigma))
+            if not index in indicesToDelete:
                 indicesToDelete.append(index)
                 count += 1
-        indicesToDelete.sort()
+    indicesToDelete.sort()
 
     # Now we have generated a list of indices to manipulate
     output = ""
