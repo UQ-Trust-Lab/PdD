@@ -1,9 +1,9 @@
-from generator.sampler import *
+from generator.sampler import DeletionSampler
 from generator.distribution import *
 import numpy as np
 import math
 
-def DeletionAttack(input, sampler=DeletionSampler(density = 0.5, distribution = (0, -1), diversity = 0.5)):
+def DeletionAttack(input, sampler=DeletionSampler(density = 0.05, distribution = (0, -1), diversity = 0.5)):
 
     strlen = len(input)
     assert strlen > 0, "The input must be a string with its length greater than 0"

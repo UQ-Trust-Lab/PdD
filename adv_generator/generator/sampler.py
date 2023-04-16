@@ -11,6 +11,16 @@ class Sampler(object):
         self.diversity = diversity
         assert self.density >= 0 and self.density <= 1, "Density must be a float number between 0 and 1."
         assert self.diversity >= 0 and self.diversity <= 1, "Diversity must be a float number between 0 and 1."
+    
+        (mu, sigma) = self.distribution
+        self.repr_dict = {
+            'density': self.density,
+            'distribution': {'mu': mu, 'sigma': sigma},
+            'diversity': self.diversity
+        }
+
+    def __repr__(self):
+        return str(self.repr_dict)
 
     def __str__(self):
         description = []
@@ -50,7 +60,14 @@ class DeletionSampler(Sampler):
     # TODO: need to design how reordering attack is implemented. The diveristy of 3Ds in this case is not used.
     def __init__(self, density = 0.5, distribution = (0, -1), diversity = 0.5):
         super().__init__(density=density, distribution=distribution, diversity=diversity)
+        self.repr_dict['name'] = 'Deletion'
 
+    def __str__(self):
+        return "Deletion " + super().__str__()
+    
+    def __repr__(self):
+        return super().__repr__()
+        
     
 class TypoSampler(Sampler):
     # Aim to define and implement a default dictionary of typos for all latin characters and set it as the default value
@@ -126,3 +143,11 @@ class TypoSampler(Sampler):
                 # DEFAULT_TYPO_DICT contains basic typo mappings, 
                 typo = TypoSampler.DEFAULT_TYPO_DICT
         self.typo = typo
+        self.repr_dict['name'] = 'Typo'
+        self.repr_dict['typo'] = self.typo
+        
+    def __str__(self):
+        return "Typo " + super().__str__()
+    
+    def __repr__(self):
+        return super().__repr__()

@@ -3,7 +3,7 @@ from generator.distribution import *
 import numpy as np
 import math
 
-def TypoAttack(input, sampler=TypoSampler()):
+def TypoAttack(input, sampler=TypoSampler(density = 0.05, distribution = (0, -1), diversity = 0.5)):
     """
     Generates typos in the input string based on the specified density and distribution in the provided sampler.
 
@@ -27,10 +27,10 @@ def TypoAttack(input, sampler=TypoSampler()):
     # Create a list of indices in different ways for different distributions
     indicesToModify = []
 
-    if sampler.distribution.sigma == -1:  # uniform distribution
+    (mu, sigma) = sampler.distribution
+    if sigma == -1:  # uniform distribution
         indicesToModify = np.random.randint(strlen, size=sizeOfTypo)
     else:
-        mu, sigma = sampler.distribution.mu, sampler.distribution.sigma
         indicesToModify = []
         while len(indicesToModify) < sizeOfTypo:
             index = int(np.random.normal(mu, sigma))
@@ -42,10 +42,11 @@ def TypoAttack(input, sampler=TypoSampler()):
     for index in indicesToModify:
         original_char = inputList[index]
         lowercase_char = original_char.lower()
-        typo_char = np.random.choice(sampler.typo[lowercase_char])
-        if original_char.isupper():  # Handle upper cases
-            typo_char = typo_char.upper()
-        inputList[index] = typo_char
+        if lowercase_char in sampler.typo.keys():
+            typo_char = np.random.choice(sampler.typo[lowercase_char])
+            if original_char.isupper():  # Handle upper cases
+                typo_char = typo_char.upper()
+            inputList[index] = typo_char
 
     output = "".join(inputList)
 
