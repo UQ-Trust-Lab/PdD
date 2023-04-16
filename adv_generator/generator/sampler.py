@@ -5,7 +5,7 @@ These three parameters altogether constitute the 3Ds principle of all sorts of o
 '''
 
 class Sampler(object):
-    def __init__(self, density = 0.5, distribution = (0, -1), diversity = 0.5):
+    def __init__(self, density = 0.05, distribution = (0, -1), diversity = 0.5):
         self.density = density
         self.distribution = distribution
         self.diversity = diversity

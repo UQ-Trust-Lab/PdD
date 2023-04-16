@@ -16,7 +16,7 @@ def DeletionAttack(input, sampler=DeletionSampler(density = 0.5, distribution = 
     
     (mu, sigma) = sampler.distribution
     if sigma == -1: # uniform distribution
-        indicesToDelete = np.random.randint(strlen, size=sizeOfDeletion).tolist()
+        indicesToDelete = np.random.randint(0, strlen, size=sizeOfDeletion).tolist()
     else:
         count = 0
         while count < sizeOfDeletion:
