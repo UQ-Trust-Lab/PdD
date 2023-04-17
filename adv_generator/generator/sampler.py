@@ -1,8 +1,8 @@
-'''
+"""
 This is the super class of all adversary methods, which defines the basis of 3Ds principle.
-It can be initialized with three parameters, i.e., density, distribution, and diversity. 
+It can be initialized with three parameters, i.e., density, distribution, and diversity.
 These three parameters altogether constitute the 3Ds principle of all sorts of our attack.
-'''
+"""
 
 class Sampler(object):
     def __init__(self, density = 0.05, distribution = (0, -1), diversity = 0.5):
@@ -45,19 +45,47 @@ class InvisibleCharSampler(Sampler):
  
 class HomoglyphsSampler(Sampler):
     # TODO: define and implement a default dictionary of homoglyphs for all latin characters and set it as the default value
-    def __init__(self, homoglyphs = {}):
-        super().__init__()
-        self.homoglyphs = homoglyphs   
+
+    DEFAULT_HOMO_DICT = {
+
+    }
+
+    ADV_HOMO_DICT = {
+
+    }
+
+    def __init__(self, density, distribution, diversity, homoglyphs=None):
+        super().__init__(density=density, distribution=distribution, diversity=diversity)
+
+        if homoglyphs is None:
+            if diversity >= 0.5:
+                homoglyphs = HomoglyphsSampler.ADV_HOMO_DICT
+            else:
+                homoglyphs = HomoglyphsSampler.DEFAULT_HOMO_DICT
+        self.homoglyphs = homoglyphs
+        self.repr_dict['name'] = 'Homoglyphs'
+
+    def __str__(self):
+        return "Homoglyphs " + super().__str__()
+
+    def __repr__(self):
+        return super().__repr__()
     
 
 class ReorderingSampler(Sampler):
-    # TODO: need to design how reordering attack is implemented. The diveristy of 3Ds in this case is not used.
+    # TODO: need to design how reordering attack is implemented. The diversity of 3Ds in this case is not used.
     def __init__(self):
-        super().__init__()   
+        super().__init__()
+
+    def __str__(self):
+        return "Reordering " + super().__str__()
+
+    def __repr__(self):
+        return super().__repr__()
 
     
 class DeletionSampler(Sampler):
-    # TODO: need to design how reordering attack is implemented. The diveristy of 3Ds in this case is not used.
+    # TODO: need to design how reordering attack is implemented. The diversity of 3Ds in this case is not used.
     def __init__(self, density = 0.5, distribution = (0, -1), diversity = 0.5):
         super().__init__(density=density, distribution=distribution, diversity=diversity)
         self.repr_dict['name'] = 'Deletion'
@@ -180,7 +208,6 @@ class TypoSampler(Sampler):
         ' ': ['?', '<', '>'],
 
     }
-
 
     def __init__(self, density, distribution, diversity, typo=None):
         super().__init__(density=density, distribution=distribution, diversity=diversity)
