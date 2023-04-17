@@ -31,11 +31,14 @@ def TypoAttack(input, sampler=TypoSampler(density = 0.05, distribution = (0, -1)
     if sigma == -1:  # uniform distribution
         indicesToModify = np.random.randint(strlen, size=sizeOfTypo)
     else:
-        indicesToModify = []
-        while len(indicesToModify) < sizeOfTypo:
+        count = 0
+        while count < sizeOfTypo:
             index = int(np.random.normal(mu, sigma))
-            if index not in indicesToModify and 0 <= index < strlen:
+            if index not in indicesToModify:
                 indicesToModify.append(index)
+                count += 1
+    indicesToModify.sort()
+
 
 
     inputList = list(input)  # "Oh hi" -> ['O','h',' ','h','i']
