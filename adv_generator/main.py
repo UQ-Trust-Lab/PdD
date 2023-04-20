@@ -1,6 +1,7 @@
 from generator.sampler import *
 from generator.distribution import *
 from generator.typo_attack import *
+from generator.homoglyphs_attack import *
 from generator.deletion_attack import *
 import numpy as np
 import csv, os
@@ -16,7 +17,8 @@ def test_attack(attack_method, input_string, density, distribution):
         sampler = TypoSampler(density = density, distribution = distribution, diversity = 0.5)
         output, indices = TypoAttack(input_string, sampler)
     elif attack_method == 'Homo':
-        pass
+        sampler = HomoglyphsSampler(density = density, distribution = distribution, diversity = 0.5)
+        output, indices = HomoglyphsAttack(input_string, sampler)
     elif attack_method == 'Reorder':
         pass
 
@@ -51,4 +53,5 @@ test_attack('Deletion', input_string3, density, distribution3)
 test_attack('Deletion', input_string4, density, distribution4)
 test_attack('Typo', input_string3, density, distribution3)
 test_attack('Typo', input_string4, density, distribution4)
-
+test_attack('Homo', input_string3, density, distribution3)
+test_attack('Homo', input_string4, density, distribution4)

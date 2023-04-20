@@ -46,24 +46,53 @@ class InvisibleCharSampler(Sampler):
 class HomoglyphsSampler(Sampler):
     # TODO: define and implement a default dictionary of homoglyphs for all latin characters and set it as the default value
 
-    DEFAULT_HOMO_DICT = {
+    HOMO_DICT = {
+        "a": ["ɑ", "а", "á", "à", "ä", "â", "ã", "α", "ຳ", "ȧ", "å"], 
+        "b": ["d", "lb", "l", "I3", "β", "฿", "ҍ", "ც"], 
+        "c": ["ϲ", "с", "ⅽ", "ċ", "ć", "ç", "α", "ς"], 
+        "d": ["b", "cl", "dl", "di", "ԁ", "ժ", "Ð", "đ", "ď"], 
+        "e": ["é", "è", "ê", "ë", "ē", "ĕ", "ě", "ė", "έ", "ɛ", "e"], 
+        "f": ["ϝ", "ƒ", "ғ", "բ", "ſ"], 
+        "g": ["q", "ɢ", "ɡ", "ġ", "ğ", "ǵ", "ģ"], 
+        "h": ["lh", "ih", "li", "hl", "ĥ", "Һ", "հ", "♓"], 
+        "i": ["1", "l", "ì", "í", "î", "ï", "ĩ", "ɨ", "ι", "ꙇ"], 
+        "j": ["ϳ", "ј", "ʝ", "ɉ", "ǰ", "j́"],
+        "k": ["lk", "ik", "lc", "κ", "ⱪ", "қ", "ӄ", "ķ"], 
+        "l": ["ʟ", "ȴ", "ḷ", "ḻ", "ḽ", "ļ", "ɫ", "ł", "1", "|", "i"],
+        "m": ["n", "nn", "rn", "rr", "ln", "ɱ", "ṃ", "м", "ɯ"], 
+        "n": ["m", "r", "ń", "ṅ", "ň", "ñ", "ɴ"], 
+        "o": ["0", "ο", "о", "ọ", "ỏ", "ǫ", "ȯ", "ö", "ȫ", "ő", "ō", "ṓ", "ṑ", "ǿ", "ø", "ǭ", "œ", "ɔ"],
+        "p": ["ρ", "р", "þ", "ƿ", "ṗ", "ҏ", "Ґ"], 
+        "q": ["g", "գ", "ԛ", "զ", "ყ"], 
+        "r": ["ʀ", "Г", "r", "Г", "ɼ", "ɽ", "ŕ", "ŗ", "ř"], 
+        "s": ["Ⴝ", "Ꮪ", "ʂ", "ś", "ѕ"], "t": ["τ", "т", "ţ", "ț"], 
+        "u": ["μ", "υ", "ս", "ц", "ᴜ"], "v": ["ѵ", "ν", "v"], 
+        "w": ["vv", "ѡ", "ɯ", "ω", "ຟ", "ա", "w"], 
+        "x": ["х", "ҳ", "x"], 
+        "y": ["ʏ", "γ", "у", "ү", "ý", "у"], 
+        "z": ["ʐ", "ż", "ź", "ʐ", "ᴢ"],
 
-    }
-
-    ADV_HOMO_DICT = {
+        "0": ["ο", "о", "Ỏ", "ơ", "Ó", "ô", "ö"],
+        "1": ["l", "I", "ǀ"],
+        "2": ["z", "ƶ", "ź", "ż"],
+        "3": ["Ʒ", "з", "Ƹ", "ȝ"],
+        "4": ["A", "а", "á", "ă", "ạ"],
+        "5": ["ѕ", "Ṣ"],
+        "6": ["b", "Ḅ", "Ḇ"],
+        "7": ["𝟕", "ʟ"],
+        "8": ["B", "𝟠", "ß"],
+        "9": ["q", "զ", "φ"]
 
     }
 
     def __init__(self, density, distribution, diversity, homoglyphs=None):
         super().__init__(density=density, distribution=distribution, diversity=diversity)
-
         if homoglyphs is None:
-            if diversity >= 0.5:
-                homoglyphs = HomoglyphsSampler.ADV_HOMO_DICT
-            else:
-                homoglyphs = HomoglyphsSampler.DEFAULT_HOMO_DICT
+            homoglyphs = HomoglyphsSampler.HOMO_DICT
         self.homoglyphs = homoglyphs
-        self.repr_dict['name'] = 'Homoglyphs'
+        self.repr_dict['name'] = 'Homo'
+        self.repr_dict['homo'] = self.homoglyphs
+        
 
     def __str__(self):
         return "Homoglyphs " + super().__str__()
@@ -99,37 +128,7 @@ class DeletionSampler(Sampler):
     
 class TypoSampler(Sampler):
     # Aim to define and implement a default dictionary of typos for all latin characters and set it as the default value
-    DEFAULT_TYPO_DICT = {
-        'a': ['q', 's', 'z'],
-        'b': ['v', 'n'],
-        'c': ['x', 'v'],
-        'd': ['s', 'f', 'e'],
-        'e': ['r', 'w', 'd'],
-        'f': ['d', 'g', 'r'],
-        'g': ['f', 'h', 't'],
-        'h': ['g', 'j', 'y'],
-        'i': ['u', 'o', 'k'],
-        'j': ['h', 'k', 'u'],
-        'k': ['j', 'l', 'i'],
-        'l': ['k', 'o', 'p'],
-        'm': ['n'],
-        'n': ['m', 'b'],
-        'o': ['i', 'p', 'l'],
-        'p': ['o', 'l'],
-        'q': ['a', 'w'],
-        'r': ['e', 't', 'f'],
-        's': ['a', 'd'],
-        't': ['r', 'y', 'g'],
-        'u': ['y', 'i', 'j'],
-        'v': ['c', 'b'],
-        'w': ['q', 'e'],
-        'x': ['z', 'c'],
-        'y': ['t', 'u', 'h'],
-        'z': ['x'],
-    }
-
-
-    ADV_TYPO_DICT = {
+    TYPO_DICT = {
         'a': ['q', 's', 'w', 'z'],
         'b': ['v', 'n', 'g', 'h'],
         'c': ['x', 'v', 'd', 'f'],
@@ -168,56 +167,51 @@ class TypoSampler(Sampler):
         '9': ['8', 'i', 'o', '0'],
         '0': ['9', 'o', 'p'],
 
-        '!': ['@'],
-        '@': ['!', '#'],
-        '#': ['@', '$'],
-        '$': ['#', '%'],
-        '%': ['$', '^'],
-        '^': ['%', '&'],
-        '&': ['^', '*'],
-        '*': ['&', '('],
-        '(': ['*', ')'],
-        ')': ['(', '-'],
-        '-': [')', '_'],
-        '_': ['-', '='],
-        '=': ['_', '+'],
-        '+': ['='],
+        # '!': ['@'],
+        # '@': ['!', '#'],
+        # '#': ['@', '$'],
+        # '$': ['#', '%'],
+        # '%': ['$', '^'],
+        # '^': ['%', '&'],
+        # '&': ['^', '*'],
+        # '*': ['&', '('],
+        # '(': ['*', ')'],
+        # ')': ['(', '-'],
+        # '-': [')', '_'],
+        # '_': ['-', '='],
+        # '=': ['_', '+'],
+        # '+': ['='],
 
-        '`': ['~'],
-        '~': ['`'],
-        '{': ['['],
-        '[': ['{', ']'],
-        ']': ['[', '}'],
-        '}': [']'],
-        '|': ['\\'],
-        '\\': ['|'],
-        ':': [';', "'"],
-        ';': [':', '"'],
-        "'": [';', '"'],
-        '"': ["'", '<'],
-        '<': ['"', '>'],
-        '>': ['<', '?'],
-        '?': ['>'],
+        # '`': ['~'],
+        # '~': ['`'],
+        # '{': ['['],
+        # '[': ['{', ']'],
+        # ']': ['[', '}'],
+        # '}': [']'],
+        # '|': ['\\'],
+        # '\\': ['|'],
+        # ':': [';', "'"],
+        # ';': [':', '"'],
+        # "'": [';', '"'],
+        # '"': ["'", '<'],
+        # '<': ['"', '>'],
+        # '>': ['<', '?'],
+        # '?': ['>'],
 
-        ',': ['<', '.'],
-        '.': [',', '>'],
-        '/': ['?', '.'],
-        '<': [',', '.'],
-        '>': ['.', '/'],
-        '?': ['/', ' '],
-        ' ': ['?', '<', '>'],
+        # ',': ['<', '.'],
+        # '.': [',', '>'],
+        # '/': ['?', '.'],
+        # '<': [',', '.'],
+        # '>': ['.', '/'],
+        # '?': ['/', ' '],
+        # ' ': ['?', '<', '>'],
 
     }
 
     def __init__(self, density, distribution, diversity, typo=None):
         super().__init__(density=density, distribution=distribution, diversity=diversity)
         if typo is None:
-            if diversity >= 0.5:
-                # ADV_TYPO_DICT contains more advanced typo mappings.
-                typo = TypoSampler.ADV_TYPO_DICT
-            else:
-                # DEFAULT_TYPO_DICT contains basic typo mappings, 
-                typo = TypoSampler.DEFAULT_TYPO_DICT
+            typo = TypoSampler.TYPO_DICT
         self.typo = typo
         self.repr_dict['name'] = 'Typo'
         self.repr_dict['typo'] = self.typo
