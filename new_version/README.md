@@ -18,6 +18,8 @@ There are three main parameters that control the perturbation:
   - Letter cases: It changes the cases of a letter, e.g. `'a'` to `'A'` or `'A'` to `'a'`.
   - Shift-key: It replaces a character with the corresponding key when using or not using the shift key.
   - Keyboard Typo: It replaces a character with the nearest character on a keyboard.
+  - Homoglyphs: It replace a character with its homoglyph.
+  - Invisible_chars: It insert an invisible chars to after the original letter.
 
 ## Usage
 

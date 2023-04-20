@@ -5,13 +5,16 @@ from .sampler import Sampler
 
 
 class Generator:
-    def __init__(self, distribution: str, density: float, diversity_dict: Dict[str, List[str]]=None, **kwargs):
+    def __init__(self, distribution: str, density: float, diversity_dict: Dict[str, List[str]]=None,
+                 insert_mode:bool = False,
+                 **kwargs):
         """
         This class is used to generate a perturbed string.
         :param distribution: The distribution of perturbations.
         :param density: The density of perturbations, e.g., 0.1 means 10% of the indexes are perturbed.
         :param diversity_dict: The diversity dictionary, which describes the candidate perturbed characters for each
         index.
+        :param insert_mode: The insert mode, which is used to insert perturbations into the original string.
         :param kwargs: The keyword arguments, which are used to set the distribution of perturbations, e.g., mean and
         std.
         """
@@ -21,6 +24,7 @@ class Generator:
         self.density = density
         self.diversity_dict = diversity_dict
         self.distribution = distribution
+        self.insert_mode = insert_mode
         self.kwargs = kwargs
 
     def generate(self, string_ori: str) -> str:
@@ -52,7 +56,9 @@ class Generator:
             char_ptb = string_ptb[idx]  # Get the original character
 
             random_idx = np.random.randint(0, len(self.diversity_dict[char_ptb]))  # Choose a random perturbed character
-            string_ptb[idx] = self.diversity_dict[char_ptb][random_idx]  # Perturb the character
+            if not self.insert_mode:
+                string_ptb[idx] = ''  # Delete the original character
+            string_ptb[idx] += self.diversity_dict[char_ptb][random_idx]  # Perturb the character
 
         string_ptb = "".join(string_ptb)
         return string_ptb
