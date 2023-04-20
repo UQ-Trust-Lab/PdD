@@ -13,8 +13,8 @@ def TypoAttack(input, sampler=TypoSampler(density = 0.05, distribution = (0, -1)
             Defaults to TypoSampler().
 
     Note:
-        Here I use `diversity` to indicate the range of TYPO. i.e. how many keys around the selected key.
-        For smaller diversity, 'a' -> ['q', 's']; for bigger diversity 'a' -> ['q', 's', 'w', 'z'].
+        Diversity is used to control the range of the possible typo.
+
 
     """
 
@@ -46,7 +46,15 @@ def TypoAttack(input, sampler=TypoSampler(density = 0.05, distribution = (0, -1)
         original_char = inputList[index]
         lowercase_char = original_char.lower()
         if lowercase_char in sampler.typo.keys():
-            typo_char = np.random.choice(sampler.typo[lowercase_char])
+            typos = sampler.typo[lowercase_char]
+            if sampler.diversity == 1:
+                typo_char = np.random.choice(sampler.typo[lowercase_char])
+            else:
+                # Diversity controls the range of the possible typo.
+                num_typo_use = int(sampler.diversity * len(typos))
+                typo_char_range = np.random.choice(typos, size=num_typo_use).tolist()
+                typo_char = np.random.choice(typo_char_range)
+            
             if original_char.isupper():  # Handle upper cases
                 typo_char = typo_char.upper()
             inputList[index] = typo_char
