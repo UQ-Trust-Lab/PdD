@@ -1,4 +1,5 @@
 import math
+from typing import List
 
 from .distribution import Distribution
 
@@ -18,7 +19,7 @@ class Sampler:
         self.distribution = distribution
         self.density = density
 
-    def sample(self) -> list[int]:
+    def sample(self) -> List[int]:
         """
         This function is used to sample the indexes of perturbations.
         :return: The indexes of perturbations.
