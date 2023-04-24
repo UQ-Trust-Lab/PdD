@@ -10,15 +10,26 @@ from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from utils import train, test, MyDataSet
 from sklearn import metrics
+from argparse import ArgumentParser
+
+parser = ArgumentParser(description='PDD TESTER')
+parser.add_argument('--perturbation', default="deletion", type=str,
+                    help='perturbation method')
+parser.add_argument('--distribution', default="uniform", type=str,
+                    help='distribution of perturbation')
+parser.add_argument('--density', default=0.1, type=float,
+                    help='density of perturbation')
+
+args = parser.parse_args()
 
 # Meta data
 NUM_LABELS = 2
 MODEL_NAME = "bert-base-uncased"
 DATA_SET = "rotten_tomatoes"
-PERTURBATION = "deletion"
-DISTRIBUTION = "uniform"
+PERTURBATION = args.perturbation
+DISTRIBUTION = args.distribution
 PATIENCE = 5
-DENSITY = 0.1
+DENSITY = args.density
 RESULT_FILE = f"results/{MODEL_NAME}_{DATA_SET}_{PERTURBATION}_{DISTRIBUTION}_{DENSITY}_robust_training.txt"
 with open(RESULT_FILE, "a") as file:
     file.write(f"Model: {MODEL_NAME}\n")
@@ -163,7 +174,7 @@ while not early_stopping:
         file.write(
             f"Round {i} test loss: {average_test_loss} accuracy: {epoch_test_accuracy} precision: {average_test_precision} recall: {average_test_recall} f1: {average_test_f1}\n")
 
-    if epoch_test_accuracy <= best_test_acc:
+    if epoch_test_accuracy < best_test_acc:
         patience_count += 1
     else:
         best_test_acc = epoch_test_accuracy
@@ -174,6 +185,10 @@ while not early_stopping:
     if patience_count >= patience:
         print(f"Early stopping at round {i}")
         print(f"Best test accuracy: {best_test_acc} at round {best_test_acc_round}")
+
+        with open(RESULT_FILE, "a") as file:
+            file.write(f"Early stopping at round {i}\n")
+            file.write(f"Best test accuracy: {best_test_acc} at round {best_test_acc_round}\n")
         # Save the best model parameters
         with open(f"models/{MODEL_NAME}_{DATA_SET}_{PERTURBATION}_{DISTRIBUTION}_{DENSITY}", "wb") as file:
             pickle.dump(best_model_parameters, file)
