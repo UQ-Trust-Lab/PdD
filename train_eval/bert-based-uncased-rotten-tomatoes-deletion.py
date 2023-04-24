@@ -163,7 +163,7 @@ while not early_stopping:
         file.write(
             f"Round {i} test loss: {average_test_loss} accuracy: {epoch_test_accuracy} precision: {average_test_precision} recall: {average_test_recall} f1: {average_test_f1}\n")
 
-    if epoch_test_accuracy < best_test_acc:
+    if epoch_test_accuracy <= best_test_acc:
         patience_count += 1
     else:
         best_test_acc = epoch_test_accuracy
