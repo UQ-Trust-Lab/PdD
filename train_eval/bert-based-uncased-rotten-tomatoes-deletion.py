@@ -163,11 +163,7 @@ while not early_stopping:
         file.write(
             f"Round {i} test loss: {average_test_loss} accuracy: {epoch_test_accuracy} precision: {average_test_precision} recall: {average_test_recall} f1: {average_test_f1}\n")
 
-<<<<<<< HEAD
-    if epoch_test_accuracy < best_test_acc:
-=======
     if epoch_test_accuracy <= best_test_acc:
->>>>>>> main
         patience_count += 1
     else:
         best_test_acc = epoch_test_accuracy
@@ -182,8 +178,4 @@ while not early_stopping:
         with open(f"models/{MODEL_NAME}_{DATA_SET}_{PERTURBATION}_{DISTRIBUTION}_{DENSITY}", "wb") as file:
             pickle.dump(best_model_parameters, file)
         early_stopping = True
-<<<<<<< HEAD
     i += 1
-=======
-    i += 1
->>>>>>> main
