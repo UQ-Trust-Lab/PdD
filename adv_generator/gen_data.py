@@ -25,7 +25,7 @@ def test_attack(attack_method, input_string, density, distribution):
 
 input_file = "dataset.txt"
 output_file = "new_dataset.txt"
-density = 0.2
+density = 0.5
 
 with open(input_file, "r") as file:
     sentences = file.readlines()
@@ -50,5 +50,4 @@ with open(output_file, "w") as file:
 
         # Homoglyphs attack
         modified_sentence = test_attack('Homo', sentence, density, distribution)
-        file.write(original_sentence + "\n")
         file.write(modified_sentence + "\n\n")
