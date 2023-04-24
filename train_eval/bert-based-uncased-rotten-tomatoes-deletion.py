@@ -2,6 +2,7 @@ from datasets import load_dataset
 from transformers import BertForSequenceClassification, BertTokenizerFast
 import torch
 from new_version.perturbation import *
+from collections import defaultdict
 from tqdm import tqdm
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
@@ -14,8 +15,9 @@ MODEL_NAME = "bert-base-uncased"
 DATA_SET = "rotten_tomatoes"
 DISTRIBUTION = "uniform"
 DENSITY = 0.5
-DIVERSITY_DICT = {' ': [' ']}
-DIVERSITY_DICT.update(DELETION_DICT)
+diversity_dict = defaultdict(lambda: [' '])
+diversity_dict[' '] = [' '] # Do not perturb the space character
+diversity_dict.update(DELETION_DICT)
 EPOCH = 10
 # Initialise model and tokenizer from meta data
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -27,7 +29,7 @@ train_set = dataset["train"]
 val_set = dataset["validation"]
 test_set = dataset["test"]
 # Initialise the perturbation generator
-generator = Generator(DISTRIBUTION, DENSITY, DIVERSITY_DICT)
+generator = Generator(DISTRIBUTION, DENSITY, diversity_dict)
 train_set_text = train_set["text"]
 train_set_label = train_set["label"]
 test_set_text = val_set["text"] + test_set["text"]
@@ -35,4 +37,5 @@ test_set_label = val_set["label"] + test_set["label"]
 # Add perturbation to the data
 perturbed_train_set_text = []
 for i in range(len(train_set_text)):
+    print(train_set_text[i])
     perturbed_train_set_text.append(generator.generate(train_set_text[i]))
