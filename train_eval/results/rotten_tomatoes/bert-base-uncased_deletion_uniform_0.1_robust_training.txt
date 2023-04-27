@@ -1,0 +1,6 @@
+Model: bert-base-uncased
+Dataset: rotten_tomatoes
+Perturbation: deletion
+Distribution: uniform
+Density: 0.1
+Number of perturbation: 5

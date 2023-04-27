@@ -8,7 +8,7 @@ from collections import defaultdict
 from tqdm import tqdm
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
-from utils import train, test, MyDataSet
+from utils import train, test, MyDataSet, set_parameters
 from sklearn import metrics
 from argparse import ArgumentParser
 
@@ -19,6 +19,8 @@ parser.add_argument('--distribution', default="uniform", type=str,
                     help='distribution of perturbation')
 parser.add_argument('--density', default=0.1, type=float,
                     help='density of perturbation')
+parser.add_argument('--num_of_perturbation', default=5, type=int,
+                    help='number of perturbation samples generated for each sample')
 
 args = parser.parse_args()
 
@@ -28,21 +30,25 @@ MODEL_NAME = "bert-base-uncased"
 DATA_SET = "rotten_tomatoes"
 PERTURBATION = args.perturbation
 DISTRIBUTION = args.distribution
-PATIENCE = 5
 DENSITY = args.density
-RESULT_FILE = f"results/{MODEL_NAME}_{DATA_SET}_{PERTURBATION}_{DISTRIBUTION}_{DENSITY}_robust_training.txt"
+NUM_OF_PERTURBATION = args.num_of_perturbation
+RESULT_FILE = f"../../results/{DATA_SET}/{MODEL_NAME}_{PERTURBATION}_{DISTRIBUTION}_{DENSITY}_robust_training.txt"
+CLEAN_MODEL = f"../../models/{DATA_SET}/{MODEL_NAME}_clean_training"
 with open(RESULT_FILE, "a") as file:
     file.write(f"Model: {MODEL_NAME}\n")
     file.write(f"Dataset: {DATA_SET}\n")
     file.write(f"Perturbation: {PERTURBATION}\n")
     file.write(f"Distribution: {DISTRIBUTION}\n")
     file.write(f"Density: {DENSITY}\n")
+    file.write(f"Number of perturbation: {NUM_OF_PERTURBATION}\n")
 
 diversity_dict = defaultdict(lambda: [' '])
 diversity_dict.update(DELETION_DICT)
 # Initialise model and tokenizer from meta data
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = BertForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=NUM_LABELS)
+clean_model_params = pickle.load(open(CLEAN_MODEL, "rb"))
+model = set_parameters(model, clean_model_params)
 tokenizer = BertTokenizerFast.from_pretrained(MODEL_NAME)
 # Load the data
 dataset = load_dataset(DATA_SET)
@@ -58,23 +64,25 @@ test_set_label = val_set["label"] + test_set["label"]
 # Add perturbation to the data
 perturbed_train_set_text = []
 for i in range(len(train_set_text)):
-    generator = Generator(DISTRIBUTION, DENSITY, diversity_dict)
-    perturbed_train_set_text.append(generator.generate(train_set_text[i]))
+    for j in range(NUM_OF_PERTURBATION):
+        generator = Generator(DISTRIBUTION, DENSITY, diversity_dict)
+        perturbed_train_set_text.append(generator.generate(train_set_text[i]))
 perturbed_test_set_text = []
 for i in range(len(test_set_text)):
-    generator = Generator(DISTRIBUTION, DENSITY, diversity_dict)
-    perturbed_test_set_text.append(generator.generate(test_set_text[i]))
+    for j in range(NUM_OF_PERTURBATION):
+        generator = Generator(DISTRIBUTION, DENSITY, diversity_dict)
+        perturbed_test_set_text.append(generator.generate(test_set_text[i]))
 perturbed_train_set_text = train_set_text + perturbed_train_set_text
-perturbed_train_set_labels = train_set_label * 2
+perturbed_train_set_labels = train_set_label + [label for label in train_set_label for i in range(NUM_OF_PERTURBATION)]
 perturbed_test_set_text = test_set_text + perturbed_test_set_text
-perturbed_test_set_labels = test_set_label * 2
+perturbed_test_set_labels = test_set_label + [label for label in test_set_label for i in range(NUM_OF_PERTURBATION)]
 # Write the perturbed data to a csv file
-with open(f"perturbed_datasets/{DATA_SET}_{PERTURBATION}_{DISTRIBUTION}_{DENSITY}_train.csv", "w", newline="") as file:
+with open(f"../../perturbed_datasets/{DATA_SET}/{PERTURBATION}_{DISTRIBUTION}_{DENSITY}_train.csv", "w", newline="") as file:
     writer = csv.writer(file)
     writer.writerow(["text", "label"])
     writer.writerows(zip(perturbed_train_set_text, perturbed_train_set_labels))
 
-with open(f"perturbed_datasets/{DATA_SET}_{PERTURBATION}_{DISTRIBUTION}_{DENSITY}_test.csv", "w", newline="") as file:
+with open(f"../../perturbed_datasets/{DATA_SET}/{PERTURBATION}_{DISTRIBUTION}_{DENSITY}_test.csv", "w", newline="") as file:
     writer = csv.writer(file)
     writer.writerow(["text", "label"])
     writer.writerows(zip(perturbed_test_set_text, perturbed_test_set_labels))
@@ -190,7 +198,7 @@ while not early_stopping:
             file.write(f"Early stopping at round {i}\n")
             file.write(f"Best test accuracy: {best_test_acc} at round {best_test_acc_round}\n")
         # Save the best model parameters
-        with open(f"models/{MODEL_NAME}_{DATA_SET}_{PERTURBATION}_{DISTRIBUTION}_{DENSITY}", "wb") as file:
+        with open(f"../../models/{DATA_SET}/{MODEL_NAME}_{PERTURBATION}_{DISTRIBUTION}_{DENSITY}", "wb") as file:
             pickle.dump(best_model_parameters, file)
         early_stopping = True
     i += 1

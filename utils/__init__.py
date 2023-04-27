@@ -1,6 +1,8 @@
 """
 Some utility functions and classes for model training and evaluation.
 """
+from collections import OrderedDict
+
 import torch
 
 
@@ -55,3 +57,19 @@ def test(batch, model, device):
     predictions = torch.argmax(test_outputs.logits, dim=-1)
     accuracy = torch.sum(torch.eq(predictions, labels)) / labels.shape[0]
     return test_loss, predictions, accuracy, labels
+
+
+def set_parameters(model, parameters):
+    """
+    Set the parameters of a model.
+    Args:
+        model: A neural network models with parameters.
+        parameters: A list of parameters for the model.
+
+    Returns:
+        The model with the new parameters.
+    """
+    params_dict = zip(model.state_dict().keys(), parameters)
+    state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
+    model.load_state_dict(state_dict, strict=True)
+    return model

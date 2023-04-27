@@ -1,3 +1,4 @@
+import pickle
 from datasets import load_dataset
 from transformers import BertForSequenceClassification, BertTokenizerFast
 import torch
@@ -7,13 +8,14 @@ from torch.utils.data import DataLoader
 from utils import train, test, MyDataSet
 from sklearn import metrics
 
-# Meta data
+# Metadata
 NUM_LABELS = 2
 MODEL_NAME = "bert-base-uncased"
 DATA_SET = "rotten_tomatoes"
-EPOCH = 10
-# Initialise model and tokenizer from meta data
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+RESULT_FILE = f"../../results/{DATA_SET}/{MODEL_NAME}_clean_training.txt"
+# Initialise model and tokenizer from metadata
+# cuda:1 is just for when cuda:0 is taken
+device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 model = BertForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=NUM_LABELS)
 tokenizer = BertTokenizerFast.from_pretrained(MODEL_NAME)
 # Load the data
@@ -30,13 +32,21 @@ tokenized_test_set = tokenizer(val_set["text"] + test_set["text"], truncation=Tr
 tokenized_test_set["labels"] = torch.LongTensor(val_set["label"] + test_set["label"]).clone()
 tokenized_test_set = MyDataSet(tokenized_test_set)
 # Create data loaders
-train_loader = DataLoader(tokenized_train_set, shuffle=True, batch_size=32)
-test_loader = DataLoader(tokenized_test_set, shuffle=True, batch_size=32)
+train_loader = DataLoader(tokenized_train_set, shuffle=True, batch_size=128)
+test_loader = DataLoader(tokenized_test_set, shuffle=True, batch_size=128)
 # Initialise optimizer
 optimizer = AdamW(model.parameters(), lr=2e-5)
 # Start training
+# These are for early stopping
+i = 0
+patience = 5
+patience_count = 0
+best_test_acc = 0
+best_test_acc_round = 0
+early_stopping = False
+best_model_parameters = None
 model.to(device)
-for i in range(EPOCH):
+while not early_stopping:
     train_loop = tqdm(train_loader, leave=True)
     overall_train_loss = 0
     epoch_train_predictions = None
@@ -103,3 +113,30 @@ for i in range(EPOCH):
                                         torch.flatten(epoch_train_predictions).tolist()))
     print(metrics.classification_report(torch.flatten(epoch_test_labels).tolist(),
                                         torch.flatten(epoch_test_predictions).tolist()))
+
+    with open(RESULT_FILE, "a") as file:
+        file.write(
+            f"Round {i} train loss: {average_train_loss} accuracy: {epoch_train_accuracy} precision: {average_train_precision} recall: {average_train_recall} f1: {average_train_f1}\n")
+        file.write(
+            f"Round {i} test loss: {average_test_loss} accuracy: {epoch_test_accuracy} precision: {average_test_precision} recall: {average_test_recall} f1: {average_test_f1}\n")
+
+    if epoch_test_accuracy <= best_test_acc:
+        patience_count += 1
+    else:
+        best_test_acc = epoch_test_accuracy
+        best_test_acc_round = i
+        patience_count = 0
+        best_model_parameters = [val.clone().detach().cpu().numpy() for _, val in model.state_dict().items()]
+
+    if patience_count >= patience:
+        print(f"Early stopping at round {i}")
+        print(f"Best test accuracy: {best_test_acc} at round {best_test_acc_round}")
+
+        with open(RESULT_FILE, "a") as file:
+            file.write(f"Early stopping at round {i}\n")
+            file.write(f"Best test accuracy: {best_test_acc} at round {best_test_acc_round}\n")
+        # Save the best model parameters
+        with open(f"../../models/{DATA_SET}/{MODEL_NAME}_clean_training", "wb") as file:
+            pickle.dump(best_model_parameters, file)
+        early_stopping = True
+    i += 1
