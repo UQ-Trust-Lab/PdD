@@ -17,10 +17,8 @@ parser.add_argument('--perturbation', default="deletion", type=str,
                     help='perturbation method')
 parser.add_argument('--distribution', default="uniform", type=str,
                     help='distribution of perturbation')
-parser.add_argument('--density', default=0.1, type=float,
+parser.add_argument('--density', default=0.05, type=float,
                     help='density of perturbation')
-parser.add_argument('--num_of_perturbation', default=5, type=int,
-                    help='number of perturbation samples generated for each sample')
 
 args = parser.parse_args()
 
@@ -31,7 +29,7 @@ DATA_SET = "rotten_tomatoes"
 PERTURBATION = args.perturbation
 DISTRIBUTION = args.distribution
 DENSITY = args.density
-NUM_OF_PERTURBATION = args.num_of_perturbation
+NUM_OF_PERTURBATION = 10
 RESULT_FILE = f"../../results/{DATA_SET}/{MODEL_NAME}_{PERTURBATION}_{DISTRIBUTION}_{DENSITY}_robust_training.txt"
 CLEAN_MODEL = f"../../models/{DATA_SET}/{MODEL_NAME}_clean_training"
 with open(RESULT_FILE, "a") as file:
