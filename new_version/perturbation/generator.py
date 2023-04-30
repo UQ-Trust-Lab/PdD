@@ -54,8 +54,9 @@ class Generator:
         string_ptb = list(string_ori).copy()
         for idx in idxes_ptb:
             char_ptb = string_ptb[idx]  # Get the original character
-
             random_idx = np.random.randint(0, len(self.diversity_dict[char_ptb]))  # Choose a random perturbed character
+            while self.diversity_dict[char_ptb][random_idx] == char_ptb:  # Avoid choosing the same character
+                random_idx = np.random.randint(0, len(self.diversity_dict[char_ptb]))
             if not self.insert_mode:
                 string_ptb[idx] = ''  # Delete the original character
             string_ptb[idx] += self.diversity_dict[char_ptb][random_idx]  # Perturb the character
