@@ -3,7 +3,7 @@ import csv
 from datasets import load_dataset
 from transformers import BertForSequenceClassification, BertTokenizerFast
 import torch
-from new_version.perturbation import Generator, DELETION_DICT, HOMOGLYPHS_DICT, INVISIBLE_UNICODE_CHARS, KEYBOARD_TYPO_ADVANCED_DICT
+from new_version.perturbation import Generator, DELETION_DICT, HOMOGLYPHS_DICT, INVISIBLE_UNICODE_DICT, KEYBOARD_TYPO_ADVANCED_DICT
 from collections import defaultdict
 from tqdm import tqdm
 from torch.optim import AdamW
@@ -46,7 +46,7 @@ PERTURBATION_DICT = {
     "deletion": DELETION_DICT,
     "typo": KEYBOARD_TYPO_ADVANCED_DICT,
     "homoglyphs": HOMOGLYPHS_DICT,
-    "invisible": INVISIBLE_UNICODE_CHARS
+    "invisible": INVISIBLE_UNICODE_DICT
 }
 
 diversity_dict.update(PERTURBATION_DICT[PERTURBATION])
