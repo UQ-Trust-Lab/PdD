@@ -19,13 +19,17 @@ parser.add_argument('--distribution', default="uniform", type=str,
                     help='distribution of perturbation')
 parser.add_argument('--density', default=0.05, type=float,
                     help='density of perturbation')
+parser.add_argument('--model', default="bert-base-uncased", type=str,
+                    help='large language model')
+parser.add_argument('--dataset', default="rotten_tomatoes", type=str,
+                    help='dataset for task')
 
 args = parser.parse_args()
 
 # Meta data
 NUM_LABELS = 2
-MODEL_NAME = "bert-base-uncased"
-DATA_SET = "rotten_tomatoes"
+MODEL_NAME = args.model
+DATA_SET = args.dataset
 PERTURBATION = args.perturbation
 DISTRIBUTION = args.distribution
 DENSITY = args.density
