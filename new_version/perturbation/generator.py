@@ -56,6 +56,8 @@ class Generator:
             char_ptb = string_ptb[idx]  # Get the original character
             random_idx = np.random.randint(0, len(self.diversity_dict[char_ptb]))  # Choose a random perturbed character
             while self.diversity_dict[char_ptb][random_idx] == char_ptb:  # Avoid choosing the same character
+                if len(self.diversity_dict[char_ptb]) == 1:
+                    break
                 random_idx = np.random.randint(0, len(self.diversity_dict[char_ptb]))
             if not self.insert_mode:
                 string_ptb[idx] = ''  # Delete the original character

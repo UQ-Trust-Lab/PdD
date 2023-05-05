@@ -20,10 +20,10 @@ class MyDataSet(torch.utils.data.Dataset):
 def train(batch, model, optimizer, device):
     optimizer.zero_grad()
     input_ids = batch["input_ids"].to(device)
-    token_type_ids = batch["token_type_ids"].to(device)
+    # token_type_ids = batch["token_type_ids"].to(device)
     attention_mask = batch["attention_mask"].to(device)
     labels = batch["labels"].to(device)
-    train_outputs = model(input_ids=input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask,
+    train_outputs = model(input_ids=input_ids, attention_mask=attention_mask,
                           labels=labels)
     train_loss = train_outputs.loss
     train_loss.backward()
@@ -35,10 +35,10 @@ def train(batch, model, optimizer, device):
 
 def validate(batch, model, device):
     input_ids = batch["input_ids"].to(device)
-    token_type_ids = batch["token_type_ids"].to(device)
+    # token_type_ids = batch["token_type_ids"].to(device)
     attention_mask = batch["attention_mask"].to(device)
     labels = batch["labels"].to(device)
-    val_outputs = model(input_ids=input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask,
+    val_outputs = model(input_ids=input_ids, attention_mask=attention_mask,
                         labels=labels)
     val_loss = val_outputs.loss
     predictions = torch.argmax(val_outputs.logits, dim=-1)
@@ -48,10 +48,10 @@ def validate(batch, model, device):
 
 def test(batch, model, device):
     input_ids = batch["input_ids"].to(device)
-    token_type_ids = batch["token_type_ids"].to(device)
+    # token_type_ids = batch["token_type_ids"].to(device)
     attention_mask = batch["attention_mask"].to(device)
     labels = batch["labels"].to(device)
-    test_outputs = model(input_ids=input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask,
+    test_outputs = model(input_ids=input_ids, attention_mask=attention_mask,
                          labels=labels)
     test_loss = test_outputs.loss
     predictions = torch.argmax(test_outputs.logits, dim=-1)

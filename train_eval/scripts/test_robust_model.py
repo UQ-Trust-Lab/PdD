@@ -1,6 +1,5 @@
-"""Test the clean model's performance on perturbed datasets"""
-
 import pickle
+from datasets import load_dataset
 from transformers import BertForSequenceClassification, BertTokenizerFast
 import torch
 from tqdm import tqdm
@@ -8,8 +7,8 @@ from torch.utils.data import DataLoader
 from utils import test, MyDataSet, set_parameters
 from sklearn import metrics
 from argparse import ArgumentParser
-import pandas as pd
 
+# Metadata
 parser = ArgumentParser(description='PDD TESTER')
 parser.add_argument('--perturbation', default="deletion", type=str,
                     help='perturbation method')
@@ -17,42 +16,48 @@ parser.add_argument('--distribution', default="uniform", type=str,
                     help='distribution of perturbation')
 parser.add_argument('--density', default=0.05, type=float,
                     help='density of perturbation')
+parser.add_argument('--model', default="bert-base-uncased", type=str,
+                    help='large language model')
+parser.add_argument('--dataset', default="rotten_tomatoes", type=str,
+                    help='dataset for task')
+parser.add_argument("--device", default="cuda:0", type=str, help="cuda device")
+
 args = parser.parse_args()
 
-# Meta data
 NUM_LABELS = 2
-MODEL_NAME = "bert-base-uncased"
-DATA_SET = "rotten_tomatoes"
+MODEL_NAME = args.model
+DATA_SET = args.dataset
 PERTURBATION = args.perturbation
 DISTRIBUTION = args.distribution
 DENSITY = args.density
 NUM_OF_PERTURBATION = 10
-RESULT_FILE = f"../../results/{DATA_SET}/{MODEL_NAME}_clean_testing.txt"
-CLEAN_MODEL = f"../../models/{DATA_SET}/{MODEL_NAME}_clean_training"
-DATASET_FILE = f"../../perturbed_datasets/{DATA_SET}/{PERTURBATION}_{DISTRIBUTION}_{DENSITY}_test.csv"
+DEVICE = args.device
+RESULT_FILE = f"../results/{DATA_SET}/{PERTURBATION}/{MODEL_NAME}_robust_testing.txt"
+MODEL_PATH = f"../models/{DATA_SET}/{PERTURBATION}/{MODEL_NAME}_{PERTURBATION}_{DISTRIBUTION}_{DENSITY}"
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Initialise model and tokenizer from metadata
+device = torch.device(DEVICE if torch.cuda.is_available() else "cpu")
 model = BertForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=NUM_LABELS)
-clean_model_params = pickle.load(open(CLEAN_MODEL, "rb"))
-model = set_parameters(model, clean_model_params)
+model_params = pickle.load(open(MODEL_PATH, "rb"))
+model = set_parameters(model, model_params)
 tokenizer = BertTokenizerFast.from_pretrained(MODEL_NAME)
 
 with open(RESULT_FILE, "a") as file:
-    file.write(f"Model: {MODEL_NAME} clean\n")
-    file.write(f"Dataset: {DATA_SET}\n")
+    file.write(f"Model: {MODEL_NAME}\n")
+    file.write(f"Dataset: {DATA_SET} clean\n")
     file.write(f"Perturbation: {PERTURBATION}\n")
     file.write(f"Distribution: {DISTRIBUTION}\n")
     file.write(f"Density: {DENSITY}\n")
     file.write(f"Number of perturbation: {NUM_OF_PERTURBATION}\n")
 
-# Load the perturbed dataset
-perturbed_test_set = pd.read_csv(DATASET_FILE)
-perturbed_test_text = perturbed_test_set["text"].to_list()
-perturbed_test_label = perturbed_test_set["label"].to_list()
-
+# Load the data
+dataset = load_dataset(DATA_SET)
+val_set = dataset["validation"]
+test_set = dataset["test"]
 # Tokenize the data and create tensors
-tokenized_test_set = tokenizer(perturbed_test_text, truncation=True, padding=True, return_tensors="pt")
-tokenized_test_set["labels"] = torch.LongTensor(perturbed_test_label).clone()
+# Combine val and test set and one test set
+tokenized_test_set = tokenizer(val_set["text"] + test_set["text"], truncation=True, padding=True, return_tensors="pt")
+tokenized_test_set["labels"] = torch.LongTensor(val_set["label"] + test_set["label"]).clone()
 tokenized_test_set = MyDataSet(tokenized_test_set)
 
 # Create data loaders
@@ -98,3 +103,4 @@ with open(RESULT_FILE, "a") as file:
         f"test loss: {average_test_loss} accuracy: {epoch_test_accuracy} precision: {average_test_precision} recall: {average_test_recall} f1: {average_test_f1}\n")
     file.write("-----------------------------------------------------\n")
     file.write("\n")
+
