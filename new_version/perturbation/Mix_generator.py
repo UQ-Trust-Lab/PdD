@@ -76,8 +76,6 @@ class MixGenerator:
         for idx in idxes_ptb:
             char_ptb = string_ptb[idx]  # Get the original character
             self.diversity_dict = diversity_dict_list[random.randint(0, 3)]
-            if len(self.diversity_dict[char_ptb]) == 0:
-                continue
             random_idx = np.random.randint(0, len(self.diversity_dict[char_ptb]))  # Choose a random perturbed character
             while self.diversity_dict[char_ptb][random_idx] == char_ptb:  # Avoid choosing the same character
                 if len(self.diversity_dict[char_ptb]) == 1:
