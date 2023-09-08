@@ -1,6 +1,6 @@
-# PDD: A Character-level Perturbation Generator
+# PdD: A Character-level Perturbation Generator
 
-We proposed a framework of character-level perturbation called PDD based on three metrics, **P**robability distribution, **D**ensity and **D**iversity. This is a project about character-level perturbation to text.
+We proposed a framework of character-level perturbation called PdD based on three metrics, **P**robability distribution, **D**ensity and **D**iversity. This is a project about character-level perturbation to text.
 
 Each sentence is represented by a list of characters.
 
