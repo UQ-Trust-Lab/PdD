@@ -1,6 +1,6 @@
-# Character-level Perturbation Generator
+# PDD: A Character-level Perturbation Generator
 
-This is a project about character-level perturbation to text.
+We proposed a framework of character-level perturbation called PDD based on three metrics, **P**robability distribution, **D**ensity and **D**iversity. This is a project about character-level perturbation to text.
 
 Each sentence is represented by a list of characters.
 
@@ -10,7 +10,7 @@ For example, the sentence "I am the best student in the world." would be represe
 
 There are three main parameters that control the perturbation:
 
-- **Distribution**: This parameter defines the probability distribution of all characters being perturbed. There are currently two choices: uniform and normal distribution. The corresponding classes are defined in `distribution.py`.
+- **Probability Distribution**: This parameter defines the probability distribution of all characters being perturbed. There are currently two choices: uniform and normal distribution. The corresponding classes are defined in `distribution.py`.
 - **Density**: This parameter controls how many characters will be perturbed, e.g., a density of $0.1$ means that $10\%$ of characters will be perturbed. This parameter should be a float between $0$ and $1$. It is controlled in `sampler.py`.
 - **Diversity**: This parameter describes the possible substituted characters for each character. We provide different dictionaries for this parameter, which are located in the `diversity` folder. For each character, there is a list of possible substitutions. For example, 'a' can be perturbed and replaced with 's' or 'z'; therefore, the dictionary will have a key of `'a'` and a value of `['s', 'z']`. Currently, we have the following dictionaries.
   - Deletion: It replaces a character with an empty char `''`.
