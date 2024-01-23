@@ -1,5 +1,7 @@
 # PdD: A Character-level Perturbation Generator
 
+![image-20240123120135583](README.assets/image-20240123120135583.png)
+
 We proposed a framework of character-level perturbation called PdD based on three metrics, **P**robability distribution, **D**ensity and **D**iversity. This is a project about character-level perturbation to text.
 
 Each sentence is represented by a list of characters.
@@ -32,5 +34,4 @@ You can create your perturbation dictionary like what we do in the `diversity` f
 ### About perturbation to specified characters in specified position
 
 Currently, all characters in the given sentence has a possibility to be perturbed. Therefore, If you want to perturb specified character on specified location, you need to preprocess the input sentence.
-
 
