@@ -1,6 +1,6 @@
 __all__ = ["Distribution", "RandomDistribution", "NormalDistribution"]
 
-from abc import ABC
+from abc import ABC, abstractmethod
 
 import numpy as np
 
@@ -15,14 +15,13 @@ class Distribution(ABC):
         assert max_idx > 0, "The maximum index should be greater than 0."
         self.max_idx = max_idx
 
+    @abstractmethod
     def generate(self) -> int:
         """
         This function is used to generate an index that will be perturbed.
         :return: The index of perturbations.
         """
-        raise NotImplementedError(
-            "This function should be implemented in the subclass."
-        )
+        pass
 
 
 class RandomDistribution(Distribution):

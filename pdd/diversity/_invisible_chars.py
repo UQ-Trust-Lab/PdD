@@ -1,4 +1,4 @@
-__all__ = ["INVISIBLE_UNICODE_CHARS", "INVISIBLE_UNICODE_DICT"]
+__all__ = ["INVISIBLE_UNICODE_DICT"]
 
 from collections import defaultdict
 from types import MappingProxyType

@@ -2,7 +2,7 @@ __all__ = ["SHIFT_KEY_FORWARD_DICT", "SHIFT_KEY_REVERSE_DICT", "SHIFT_KEY_DICT"]
 
 from types import MappingProxyType
 
-from .letter_cases import LETTER_LOWER2UPPER_DICT, LETTER_UPPER2LOWER_DICT
+from ._letter_cases import LETTER_LOWER2UPPER_DICT, LETTER_UPPER2LOWER_DICT
 
 SHIFT_KEY_FORWARD_DICT = MappingProxyType(
     {
