@@ -1,12 +1,16 @@
-# PdD: A Character-Level Perturbation Generator 🚀
+# PdD: The Ultimate Character-Level Perturbation Generator 🚀🔥
 
-Welcome to **PdD**, the powerful **Character-level Perturbation Generator**! A framework is designed to manipulate text at the most granular level—each individual character! This is a tool to **achieve text data augmentation**.
+Welcome to **PdD**, the game-changing **Character-Level Perturbation Generator**! If you've ever wanted to push the boundaries of text data augmentation, you've come to the right place! PdD isn't just another tool—it’s your **text manipulation playground**, where every character can be twisted, swapped, and transformed to your heart’s content.
 
 ![image-20240123120135583](README.assets/image-20240123120135583.png)
 
-Based on three core metrics, **P**robability distribution, **D**ensity, and **D**iversity, PdD allows you to transform and perturb text in dynamic ways. Whether you're working on enhancing neural network robustness or exploring creative text generation, PdD provides the tools to experiment with text like never before!
+## 🚀 Why PdD?
 
-This project is based on our paper “[Formalizing Robustness Against Character-Level Perturbations for Neural Network Language Models](https://link.springer.com/chapter/10.1007/978-981-99-7584-6_7)”, and you can cite it as follows:
+At its core, PdD is driven by three powerful principles: **P**robability distribution, **D**ensity, and **D**iversity. These metrics empower you to perturb text in ways that are dynamic, intelligent, and, most importantly, **impactful**! Whether you're enhancing neural network robustness, simulating real-world typos, or exploring creative text transformations, PdD gives you **full control** over your textual experiments.
+
+## 🔥 Backed by Research
+
+PdD is based on our paper “[Formalizing Robustness Against Character-Level Perturbations for Neural Network Language Models](https://link.springer.com/chapter/10.1007/978-981-99-7584-6_7).” Our work ensures that the perturbations aren’t just random noise but **structured, meaningful, and deeply insightful**. You can cite our work using the following BibTeX entry:
 
 ```bibtex
 @inproceedings{ma2023formalizing,
@@ -19,11 +23,13 @@ This project is based on our paper “[Formalizing Robustness Against Character-
 }
 ```
 
-## What’s PdD All About?
+## 🛠️ How Does PdD Work?
 
-Imagine a sentence like: "I am the best student in the world." Instead of thinking about words as a whole, PdD treats each sentence as a **list of individual characters**, opening up incredible possibilities for text manipulation!
+Imagine this simple sentence:
 
-For instance, the sentence above becomes:
+> **"I am the best student in the world."**
+
+Instead of processing whole words, PdD views this as a **sequence of characters**, unlocking powerful transformations:
 
 ```python
 ['I', ' ', 'a', 'm', ' ', 't', 'h', 'e', ' ', 'b', 'e', 's', 't', ' ',
@@ -31,51 +37,60 @@ For instance, the sentence above becomes:
  't', 'h', 'e', ' ', 'w', 'o', 'r', 'l', 'd', '.']
 ```
 
-### The Magic Ingredients: Three Key Parameters
+### 🎯 The Three Pillars of PdD
 
-PdD gives you full control with **three exciting parameters** to fine-tune your perturbations!
+PdD gives you the **power** to customize perturbations with three key parameters:
 
-- **Probability Distribution**: The chance of each character being perturbed. Choose between **uniform** or **normal** distribution (controlled in `distribution.py`).
-- **Density**: This parameter determines how many characters are affected. For example, a density of `0.1` means that **10%** of characters will be perturbed! Set it anywhere between **0** and **1** (controlled in `sampler.py`).
-- **Diversity**: The fun part! It defines the set of substitutions possible for each character. We've got a whole bunch of options, from **deleting characters** to replacing them with **keyboard typos**, **space**, **shifted keys**, and even **invisible characters**! Take a look at the `diversity` folder to explore these exciting choices.
+- **🔄 Probability Distribution:** Control how characters are perturbed. Choose between **uniform** or **normal** distributions (managed in `distribution.py`).
+- **📊 Density:** Define the fraction of characters to perturb. A density of `0.1` means **10% of characters** will be modified (adjustable in `sampler.py`).
+- **🌀 Diversity:** The **fun** part! Select from a range of perturbations—deletion, typos, invisible characters, and more! Explore the `diversity` folder for all the possibilities.
 
-## Types of Perturbations We Offer
+## 🎭 Types of Perturbations You Can Apply
 
-1. **Deletion**: Replace a character with nothing (`''`).
-2. **Space**: Turn a character into a space (`' '`).
-3. **Letter Cases**: Switch a character’s case, e.g., `'a'` ↔ `'A'`.
-4. **Shift-key**: Toggle between shifted and unshifted characters.
-5. **Keyboard Typos**: Simulate typing mistakes by swapping a character with a nearby key.
-6. **Homoglyphs**: Replace a character with a visually similar one (e.g., `'a'` → `'а'`).
-7. **Invisible Characters**: Insert invisible characters after a letter to confuse your model!
+PdD isn’t just about adding random noise—it gives you full control over **how** text is perturbed. Here are some exciting options:
 
-## How to Get Started 🚀
+1. **✂️ Deletion** – Remove characters entirely (`''`).
+2. **🔳 Space Insertion** – Turn letters into spaces (`' '`).
+3. **🔀 Case Switching** – Flip uppercase and lowercase (`'a'` ↔ `'A'`).
+4. **⌨️ Keyboard Typos** – Simulate real-world typos (e.g., `'g'` → `'h'`).
+5. **🎭 Homoglyphs** – Replace characters with visually similar ones (e.g., `'a'` → `'а'`).
+6. **🫥 Invisible Characters** – Insert invisible symbols that mess with models.
 
-### Installation
+## 🚀 Get Started Now!
 
-You need Python 3.10 or higher, and you need the following dependencies to run the code:
+### 🔧 Installation
 
-- pytorch
+Make sure you're using **Python 3.10 or later** and install the required dependencies:
+
+- torch
 - tqdm
-- sklearn
+- scikit-learn
 - transformers
 - datasets
 
-### File Structure
+### 🏗️ File Structure Breakdown
 
-The `example` folder provides a simple yet powerful way to generate perturbed text. Just specify the three parameters—**Probability Distribution**, **Density**, and **Diversity**—and let PdD do the magic. The result? A perturbed version of your original sentence, ready for whatever you need!
+PdD is structured to be intuitive and **easy to experiment with**:
 
-- `./diversity` folder: This folder contains the perturbation dictionary, which defines how each character can be perturbed.
-- `./example` folder: This folder contains the example code for generating perturbed text.
-- `./scripts` folder: This folder contains the scripts for running the experiments in the paper.
-- `./eval` folder: This folder contains the training code for the models with perturbed data and the evaluation code for the models.
-- `./results` folder: This folder contains the results of the perturbation process, including the original and perturbed sentences. Also, it contains the evaluation results of the models.
+- `./diversity` – The heart of PdD! Define custom perturbation rules here.
+- `./example` – Quick-start examples to see PdD in action.
+- `./scripts` – Scripts for running experiments based on our research.
+- `./eval` – Code for training and evaluating models on perturbed data.
+- `./results` – Stores original and perturbed outputs + evaluation results.
 
-### Customize Your Perturbation Dictionary
+### 🎨 Customize Your Own Perturbations!
 
-Want to get creative? You can easily customize your own perturbation dictionary by following the pattern found in the `diversity` folder. The possibilities are endless!
+PdD is fully customizable. Want to tweak how certain characters get perturbed? Dive into the `diversity` folder and **define your own perturbation rules**. The power is in your hands! 💪
 
-### Perturb Specific Characters at Specific Locations
+### 🎯 Target Specific Characters with Precision
 
-Need more precision? You can preprocess your sentence to perturb specific characters at specified positions—perfect for more targeted text manipulation.
+Need to perturb only certain characters at specific locations? PdD lets you define exactly **where and how** to apply perturbations, giving you unparalleled control over text transformations.
+
+---
+
+## 💡 Join the Future of Text Manipulation!
+
+With PdD, **text augmentation has never been this exciting**. Whether you're testing the robustness of AI models, mimicking human typos, or diving into linguistic experiments, PdD is here to help you explore **the untapped potential of character-level text transformations**.
+
+Ready to revolutionize the way you handle text? **Let’s perturb some characters! 🔥**
 
